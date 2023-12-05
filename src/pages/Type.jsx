@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { Link } from "react-router-dom";
 
-const Pokemon = () => {
+const Type = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState();
 
-  const { nomdupokemon } = useParams();
+  const { type } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://pokeapi.co/api/v2/pokemon/${nomdupokemon}`
+          `https://pokeapi.co/api/v2/type/${type}`
         );
         console.log(response.data);
         setData(response.data);
@@ -23,22 +22,22 @@ const Pokemon = () => {
       }
     };
     fetchData();
-  }, [nomdupokemon]);
+  }, [type]);
 
   return isLoading ? (
     <div>loading</div>
   ) : (
     <>
-      <div>{nomdupokemon}</div>
-      <div className="link-card">
-        <img src={data.sprites.front_default} alt="poke img" />
-      </div>
-
-      {data.types.map((item, index) => {
-        // console.log(item);
+      <div>Type : {type}</div>
+      {data.pokemon.map((item, index) => {
+        const url = item.pokemon.url.split("/")[6];
         return (
-          <Link to={`/type/${item.type.name}`} key={index}>
-            <div>{item.type.name}</div>
+          <Link to={`/pokemon/${item.pokemon.name}`} key={index}>
+            <img
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${url}.png`}
+              alt=""
+            />{" "}
+            <div>{item.pokemon.name}</div>
           </Link>
         );
       })}
@@ -46,4 +45,4 @@ const Pokemon = () => {
   );
 };
 
-export default Pokemon;
+export default Type;
